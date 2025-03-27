@@ -42,6 +42,13 @@ class MyAppState extends ChangeNotifier {
       favorites.add(current);
     }
     notifyListeners();
+  }
+
+  void removeFavorite(WordPair pair){
+    if (favorites.contains(pair)){
+      favorites.remove(pair);
+    }
+    notifyListeners();
   } 
 }
 
@@ -112,6 +119,7 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
+
     if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
@@ -120,17 +128,22 @@ class FavoritesPage extends StatelessWidget {
     
     return ListView(
       children: [
+        AppBar(
+          title: Text("Favorites"),
+        ),
         Padding(
           padding: const EdgeInsets.all(20),
           child: Text('You have '
           '${appState.favorites.length} favorites:'),
         ),
         for (var pair in appState.favorites)
-        ListTile(
-          leading: Icon(Icons.favorite),
-          title:Text(pair.asLowerCase) 
-        ),
-      ]
+        ElevatedButton.icon(
+          onPressed: () => appState.removeFavorite(pair),
+          label: Text(pair.asLowerCase),
+          icon: Icon(Icons.favorite),
+        )
+          
+      ],
     );
   }
 }
@@ -191,7 +204,6 @@ class BigCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = theme.textTheme.displayMedium!.copyWith(
-      
       color: theme.colorScheme.onPrimary,
     );
 
