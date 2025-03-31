@@ -1,31 +1,96 @@
-import 'package:english_words/english_words.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
+class ExerciseScreen extends StatefulWidget {
+  @override
+  // ignore: library_private_types_in_public_api
+  _ExerciseScreenState createState() => _ExerciseScreenState();
+}
 
-  final WordPair pair;
+class _ExerciseScreenState extends State<ExerciseScreen> {
+  List<String> exercises = ["Push-ups", "Squats", "Burpees"];
+
+  void _addExercise(String newExercise) {
+    setState(() {
+      exercises.add(newExercise);
+    });
+  }
+
+  void _showAddExerciseDialog() {
+    TextEditingController exerciseController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Add Exercise"),
+          content: TextField(
+            controller: exerciseController,
+            decoration: InputDecoration(hintText: "Enter exercise name"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (exerciseController.text.isNotEmpty) {
+                  _addExercise(exerciseController.text);
+                }
+                Navigator.pop(context);
+              },
+              child: Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          pair.asLowerCase, 
-          style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
-          ),
+   return Scaffold(
+  appBar: AppBar(title: Text("Workout Tracker")),
+  body: Padding(
+    padding: EdgeInsets.all(16.0),
+    child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 225, 
+        crossAxisSpacing: 10, 
+        mainAxisSpacing: 10, 
+        childAspectRatio: 1, 
       ),
-    );
+      itemCount: exercises.length,
+      itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed:() => log(exercises[index]),
+                label: Text(exercises[index], textAlign: TextAlign.center),
+                icon: Icon(Icons.fitness_center_outlined),
+              ),
+              SizedBox(height: 8),
+              SizedBox(
+                width: 225,  
+                child: Image.asset(
+                  "assets/courses.jpeg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+        );
+      },
+    ),
+  ),
+  floatingActionButton: FloatingActionButton(
+    onPressed: _showAddExerciseDialog,
+    child: Icon(Icons.add),
+  ),
+);
+
   }
 }
+

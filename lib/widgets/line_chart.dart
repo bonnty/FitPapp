@@ -63,19 +63,14 @@ class _LineChart extends StatelessWidget {
     switch (value.toInt()) {
       case 1:
         text = '1m';
-        break;
       case 2:
         text = '2m';
-        break;
       case 3:
         text = '3m';
-        break;
       case 4:
         text = '5m';
-        break;
       case 5:
         text = '6m';
-        break;
       default:
         return Container();
     }
@@ -106,16 +101,12 @@ class _LineChart extends StatelessWidget {
     switch (value.toInt()) {
       case 2:
         text = const Text('SEPT', style: style);
-        break;
       case 7:
         text = const Text('OCT', style: style);
-        break;
       case 12:
         text = const Text('DEC', style: style);
-        break;
       default:
         text = const Text('');
-        break;
     }
 
     return SideTitleWidget(

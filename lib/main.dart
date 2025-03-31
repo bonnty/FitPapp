@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:english_words/english_words.dart';
+import 'package:fit_papp/widgets/exercises.dart';
 import 'package:fit_papp/widgets/favorites.dart';
 import 'package:fit_papp/widgets/line_chart.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +38,17 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+
+  var exercises = <String>[];
+  void logExercises(String exercise){
+    log(exercise);
+    notifyListeners();
+  }
+
+  void addExercise(){
+    exercises.add("An exercise");
+    notifyListeners();
+  }
   
   void getNext() {
     current = WordPair.random();
@@ -70,7 +84,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     LineChartSample1(),
-    Placeholder(),
+    ExerciseScreen(),
     FavoritesPage(),
     Placeholder(),
   ];
@@ -108,48 +122,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
