@@ -1,7 +1,9 @@
 import 'package:english_words/english_words.dart';
+import 'package:fit_papp/widgets/favorites.dart';
+import 'package:fit_papp/widgets/line_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fit_papp/big_card.dart';
+import 'package:fit_papp/widgets/big_card.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,9 +20,14 @@ class MyApp extends StatelessWidget {
         title: 'Fit Papp',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.black,
+            selectedItemColor: Colors.red,
+            unselectedItemColor: Colors.blue,
+          ),
         ),
-        home: MyHomePage(),
+        home: HomePage(),
       ),
     );
   }
@@ -53,98 +60,51 @@ class MyAppState extends ChangeNotifier {
   } 
 }
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
+
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  
-  var selectedIndex = 0;
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  final List<Widget> _pages = [
+    LineChartSample1(),
+    Placeholder(),
+    FavoritesPage(),
+    Placeholder(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = GeneratorPage();
-      case 1:
-        page = FavoritesPage();
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home), 
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                  ], 
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  } 
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                ),
-              ),
-            ],
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() {
+          _currentIndex = index;
+        }),
+        showUnselectedLabels: true,
+        items: const<BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: "Home",
           ),
-        );
-      }
-    );
-  }
-}
-
-class FavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-
-
-    if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
-    
-    return ListView(
-      children: [
-        AppBar(
-          title: Text("Favorites"),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-          '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-        ElevatedButton.icon(
-          onPressed: () => appState.removeFavorite(pair),
-          label: Text(pair.asLowerCase),
-          icon: Icon(Icons.favorite),
-        )
-          
-      ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center_outlined),
+            label: "Exercises",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_outline),
+            label: "Favorites",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
+          ),
+        ],
+      ),
     );
   }
 }
