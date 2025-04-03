@@ -39,7 +39,7 @@ class PlaylistDialog extends StatefulWidget {
 }
 
 class _PlaylistDialogState extends State<PlaylistDialog> {
-  SingingCharacter? _character = SingingCharacter.lafayette;
+  Playlist? _selectedPlaylist = playlists[0];
 
   @override
   Widget build(BuildContext context) {
@@ -63,34 +63,49 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
               ),
           ),
           Flexible(
-            child: ListView.builder(
+            child: ReorderableListView.builder(
+              padding: EdgeInsets.only(right: 20),
+              onReorder: (oldIndex, newIndex){
+                    setState(() {
+                    if (oldIndex < newIndex) {
+                      // When moving down, the destination index needs to be adjusted
+                      newIndex -= 1;
+                    }
+                    final item = playlists.removeAt(oldIndex);
+                    playlists.insert(newIndex, item);
+                  });
+              },
               shrinkWrap: true,
-              itemCount: SingingCharacter.values.length,
+              itemCount: playlists.length,
               itemBuilder: (context, index) {
-                final cingchar = SingingCharacter.values[index];
-                return Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<SingingCharacter>(
-                        title: Text(cingchar.name),
-                        value: cingchar,
-                        groupValue: _character,
-                        onChanged: (SingingCharacter? value){
-                          setState(() {
-                            _character = value;
-                          });
-                        }, 
-                      )
-                    ),
-                    IconButton(
-                      onPressed: () => log('rename $cingchar'),
-                      icon: Icon(Icons.drive_file_rename_outline),
-                    ),
-                    IconButton(
-                      onPressed: () => log('delete $cingchar'),
-                      icon: Icon(Icons.delete_outline_outlined),
-                    ),
-                  ],
+                final playlist = playlists[index];
+                return ListTile(
+                  key: ValueKey(playlist),
+                  contentPadding: EdgeInsets.only(right: 30),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<Playlist>(
+                          title: Text(playlist.title),
+                          value: playlist,
+                          groupValue: _selectedPlaylist,
+                          onChanged: (Playlist? value){
+                            setState(() {
+                              _selectedPlaylist = value;
+                            });
+                          }, 
+                        )
+                      ),
+                      IconButton(
+                        onPressed: () => log('rename $playlist'),
+                        icon: Icon(Icons.drive_file_rename_outline, size: 20),
+                      ),
+                      IconButton(
+                        onPressed: () => log('delete $playlist'),
+                        icon: Icon(Icons.delete_outline_outlined, size: 20),
+                      ),
+                    ],
+                  ),
                 );
               }
             ),
@@ -99,6 +114,9 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
       ),
     );
   }
+
+
+   
 }
 
 List<Playlist> playlists = [
@@ -116,8 +134,3 @@ List<Playlist> playlists = [
   ..item=["exo 1", "exo 2", "exo 3", "exo 4"],
   ];
 
-enum SingingCharacter { lafayette, jefferson, garfield, 
-lafayettea, jeffersona, garfielda, 
-lafayetteb, jeffersonb, garfieldb,
-lafayettec, jeffersonc, garfieldc,
-lafayetted, jeffersond, garfieldd }
