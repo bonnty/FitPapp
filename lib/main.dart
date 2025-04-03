@@ -1,6 +1,6 @@
 import 'dart:developer';
-
 import 'package:fit_papp/resources/app_colors.dart';
+import 'package:fit_papp/widgets/playlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Fit Papp',
         theme: ThemeData(
           useMaterial3: true,
@@ -54,7 +55,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    Placeholder(),
+    PlaylistPage(),
     Placeholder(),
     Placeholder(),
     Placeholder(),

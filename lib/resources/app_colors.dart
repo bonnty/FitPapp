@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primary = contentColorBlue;
-  static const Color menuBackground = contentColorBlack;
+  static const Color menuBackground = contentColorWhite;
   static const Color itemsBackground = contentColorBlack;
   static const Color selectedItem = contentColorBlue;
   static const Color unselectedItem = contentColorGrey;
