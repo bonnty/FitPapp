@@ -57,14 +57,19 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(Icons.playlist_play_outlined),
-                    Text("Playlists"),
+                    Text(
+                      "Playlists",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
                   ],
                 ),
               ),
           ),
+          Divider(height: 0),
           Flexible(
             child: ReorderableListView.builder(
-              padding: EdgeInsets.only(right: 20),
+              buildDefaultDragHandles: false,
+              padding: EdgeInsets.zero,
               onReorder: (oldIndex, newIndex){
                     setState(() {
                     if (oldIndex < newIndex) {
@@ -81,12 +86,17 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
                 final playlist = playlists[index];
                 return ListTile(
                   key: ValueKey(playlist),
-                  contentPadding: EdgeInsets.only(right: 30),
+                  contentPadding: EdgeInsets.only(left: 20),
                   title: Row(
                     children: [
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: Icon(Icons.drag_handle_outlined),
+                      ),
                       Expanded(
                         child: RadioListTile<Playlist>(
                           title: Text(playlist.title),
+                          contentPadding: EdgeInsets.only(left: 10),
                           value: playlist,
                           groupValue: _selectedPlaylist,
                           onChanged: (Playlist? value){
@@ -97,7 +107,10 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
                         )
                       ),
                       IconButton(
-                        onPressed: () => log('rename $playlist'),
+                        onPressed: () {
+                          log('rename $playlist');
+                          _showRenameDialog(playlist);
+                        },
                         icon: Icon(Icons.drive_file_rename_outline, size: 20),
                       ),
                       IconButton(
@@ -115,7 +128,40 @@ class _PlaylistDialogState extends State<PlaylistDialog> {
     );
   }
 
-
+  void _showRenameDialog(Playlist playlist) {
+    final TextEditingController textController = TextEditingController(text: playlist.title);
+    showDialog(
+      context: context,
+      builder: (BuildContext context){ 
+        return AlertDialog(
+          title: Text('Rename Item'),
+          content: TextField(
+            controller: textController,
+            decoration: InputDecoration(
+              hintText: 'Enter new name',
+              border: OutlineInputBorder(),
+            ),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  playlist.title = textController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Rename'),
+            ),
+          ],
+        );
+      }
+    );
+  }
    
 }
 
